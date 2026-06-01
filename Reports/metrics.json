@@ -1,0 +1,45 @@
+{
+  "dataset": {
+    "input_path": "/mnt/data/house_sales_cleaned_for_ds570.csv",
+    "rows_after_filtering": 13964,
+    "train_rows": 11171,
+    "test_rows": 2793,
+    "target": "price_try",
+    "excluded_leakage_columns": [
+      "is_model_candidate_domain",
+      "is_model_candidate_pct",
+      "price_per_m2"
+    ]
+  },
+  "features": {
+    "categorical": [
+      "seller_type",
+      "room_layout",
+      "city",
+      "district",
+      "neighborhood"
+    ],
+    "numeric": [
+      "area_m2",
+      "rooms",
+      "living_rooms",
+      "total_rooms",
+      "listing_month",
+      "listing_day"
+    ]
+  },
+  "baseline_city_district_median": {
+    "MAE_TRY": 1343255.2422126746,
+    "RMSE_TRY": 2417258.9854619983,
+    "R2": 0.28679658379702333,
+    "MAPE_percent": 39.51600485841972,
+    "SMAPE_percent": 34.62454165245904
+  },
+  "random_forest_log_target": {
+    "MAE_TRY": 949546.4064037945,
+    "RMSE_TRY": 1968067.1022141424,
+    "R2": 0.5272333293074951,
+    "MAPE_percent": 25.373043807309337,
+    "SMAPE_percent": 23.403514708500605
+  }
+}
