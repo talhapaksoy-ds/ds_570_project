@@ -1,4 +1,4 @@
-# Step C — Streamlit Dashboard MVP Report
+# Streamlit Dashboard MVP Report
 
 ## Objective
 
