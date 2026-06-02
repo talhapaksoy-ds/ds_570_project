@@ -1,11 +1,15 @@
+"""Streamlit dashboard for the DS570 Turkish house sale price project.
+
 Expected repo location:
     app/streamlit_app.py
 
 Run from the repository root:
     streamlit run app/streamlit_app.py
 
-The app expects these project files:
+The app expects the processed data file:
     data/processed/house_sales_cleaned_for_ds570.csv
+
+The model and report artifacts are generated automatically if missing:
     models/house_price_model.joblib
     reports/metrics.json
     reports/feature_importance.csv
@@ -17,6 +21,8 @@ It also contains fallback paths for local development in /mnt/data.
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Dict, Iterable, Optional
 
@@ -63,41 +69,109 @@ def find_file(candidates: Iterable[Path]) -> Optional[Path]:
     return None
 
 
-DATA_PATH = find_file(
-    [
-        ROOT / "data" / "processed" / "house_sales_cleaned_for_ds570.csv",
-        ROOT / "house_sales_cleaned_for_ds570.csv",
-        Path("/mnt/data/house_sales_cleaned_for_ds570.csv"),
+DATA_CANDIDATES = [
+    ROOT / "data" / "processed" / "house_sales_cleaned_for_ds570.csv",
+    ROOT / "house_sales_cleaned_for_ds570.csv",
+    Path("/mnt/data/house_sales_cleaned_for_ds570.csv"),
+]
+MODEL_CANDIDATES = [
+    ROOT / "models" / "house_price_model.joblib",
+    ROOT / "model_artifacts" / "house_price_model.joblib",
+    Path("/mnt/data/model_artifacts/house_price_model.joblib"),
+]
+METRICS_CANDIDATES = [
+    ROOT / "reports" / "metrics.json",
+    ROOT / "metrics.json",
+    Path("/mnt/data/metrics.json"),
+]
+FEATURE_IMPORTANCE_CANDIDATES = [
+    ROOT / "reports" / "feature_importance.csv",
+    ROOT / "feature_importance.csv",
+    Path("/mnt/data/feature_importance.csv"),
+]
+PREDICTIONS_CANDIDATES = [
+    ROOT / "reports" / "test_predictions.csv",
+    ROOT / "test_predictions.csv",
+    Path("/mnt/data/test_predictions.csv"),
+]
+TRAIN_SCRIPT_CANDIDATES = [
+    ROOT / "src" / "models" / "train.py",
+    ROOT / "train.py",
+    Path("/mnt/data/train.py"),
+]
+
+DATA_PATH = find_file(DATA_CANDIDATES)
+MODEL_PATH = find_file(MODEL_CANDIDATES)
+METRICS_PATH = find_file(METRICS_CANDIDATES)
+FEATURE_IMPORTANCE_PATH = find_file(FEATURE_IMPORTANCE_CANDIDATES)
+PREDICTIONS_PATH = find_file(PREDICTIONS_CANDIDATES)
+TRAIN_SCRIPT_PATH = find_file(TRAIN_SCRIPT_CANDIDATES)
+
+
+def refresh_artifact_paths() -> None:
+    """Refresh global paths after training creates new artifacts."""
+    global MODEL_PATH, METRICS_PATH, FEATURE_IMPORTANCE_PATH, PREDICTIONS_PATH
+    MODEL_PATH = find_file(MODEL_CANDIDATES)
+    METRICS_PATH = find_file(METRICS_CANDIDATES)
+    FEATURE_IMPORTANCE_PATH = find_file(FEATURE_IMPORTANCE_CANDIDATES)
+    PREDICTIONS_PATH = find_file(PREDICTIONS_CANDIDATES)
+
+
+def ensure_training_artifacts() -> bool:
+    """Train the model automatically if generated artifacts are missing.
+
+    The model file is intentionally not stored in Git because it can be large.
+    This function keeps the app reproducible by generating the model and
+    reports from the committed training script and processed data.
+    """
+    required_paths = [MODEL_PATH, METRICS_PATH, FEATURE_IMPORTANCE_PATH, PREDICTIONS_PATH]
+    if all(path is not None for path in required_paths):
+        return True
+
+    if TRAIN_SCRIPT_PATH is None:
+        st.error(
+            "Training artifacts are missing and src/models/train.py was not found. "
+            "Add the training script to the repository, then rerun the app."
+        )
+        return False
+
+    with st.spinner("Model artifacts were not found. Training the model now..."):
+        try:
+            subprocess.run(
+                [sys.executable, str(TRAIN_SCRIPT_PATH)],
+                cwd=str(ROOT),
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+        except subprocess.CalledProcessError as exc:
+            st.error("Automatic model training failed.")
+            if exc.stdout:
+                st.code(exc.stdout, language="text")
+            if exc.stderr:
+                st.code(exc.stderr, language="text")
+            return False
+
+    refresh_artifact_paths()
+    missing_after_training = [
+        name
+        for name, path in {
+            "model": MODEL_PATH,
+            "metrics": METRICS_PATH,
+            "feature importance": FEATURE_IMPORTANCE_PATH,
+            "test predictions": PREDICTIONS_PATH,
+        }.items()
+        if path is None
     ]
-)
-MODEL_PATH = find_file(
-    [
-        ROOT / "models" / "house_price_model.joblib",
-        ROOT / "model_artifacts" / "house_price_model.joblib",
-        Path("/mnt/data/model_artifacts/house_price_model.joblib"),
-    ]
-)
-METRICS_PATH = find_file(
-    [
-        ROOT / "reports" / "metrics.json",
-        ROOT / "metrics.json",
-        Path("/mnt/data/metrics.json"),
-    ]
-)
-FEATURE_IMPORTANCE_PATH = find_file(
-    [
-        ROOT / "reports" / "feature_importance.csv",
-        ROOT / "feature_importance.csv",
-        Path("/mnt/data/feature_importance.csv"),
-    ]
-)
-PREDICTIONS_PATH = find_file(
-    [
-        ROOT / "reports" / "test_predictions.csv",
-        ROOT / "test_predictions.csv",
-        Path("/mnt/data/test_predictions.csv"),
-    ]
-)
+
+    if missing_after_training:
+        st.error(
+            "Training finished, but these expected artifacts are still missing: "
+            + ", ".join(missing_after_training)
+        )
+        return False
+
+    return True
 
 
 @st.cache_data(show_spinner=False)
@@ -300,7 +374,10 @@ def prediction_tab(df: pd.DataFrame, model: Any | None) -> None:
     )
 
     if model is None:
-        st.error("Model file was not found. Place house_price_model.joblib under models/ and rerun the app.")
+        st.error(
+            "Model could not be loaded. The app tried to generate the model automatically, "
+            "but the model artifact is still unavailable."
+        )
         return
 
     col1, col2, col3 = st.columns(3)
@@ -532,6 +609,9 @@ def main() -> None:
 
     if DATA_PATH is None:
         st.error("Processed data was not found. Run src/data/preprocess.py first.")
+        st.stop()
+
+    if not ensure_training_artifacts():
         st.stop()
 
     df = load_data(str(DATA_PATH))
