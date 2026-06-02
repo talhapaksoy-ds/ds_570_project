@@ -1,5 +1,3 @@
-"""Streamlit dashboard for the DS570 Turkish house sale price project.
-
 Expected repo location:
     app/streamlit_app.py
 
