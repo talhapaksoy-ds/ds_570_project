@@ -1,0 +1,5 @@
+# Generated model artifacts
+models/*.joblib
+models/*.pkl
+models/*.pickle
+model_artifacts/
