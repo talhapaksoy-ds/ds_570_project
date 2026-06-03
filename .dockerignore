@@ -1,0 +1,35 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# Large generated model artifacts
+models/*.joblib
+models/*.pkl
+models/*.pickle
+model_artifacts/
+
+# Local data cache and temporary files
+data/raw/
+*.zip
+*.tar
+*.gz
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Streamlit cache
+.streamlit/
