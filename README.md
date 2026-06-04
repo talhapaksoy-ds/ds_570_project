@@ -230,44 +230,60 @@ The dashboard explicitly describes data and modeling limitations.
 
 ```text
 .
+├── Reports/
+│   └── Final Report Docs/
+│       ├── .gitkeep
+│       ├── FINAL_QA_REPORT.md
+│       ├── GITHUB_FINAL_CHECKLIST.md
+│       ├── PRESENTATION_CHEATSHEET.md
+│       └── SUBMISSION_NOTE.md
+│
+├── DASHBOARD_REPORT.md
+├── DEMO_SCRIPT.md
+├── DOCKERIZATION_REPORT.md
+├── DS570_RUBRIC_CHECKLIST.md
+├── MODEL_REPORT.md
+├── PROJECT_DOCUMENTATION.md
+├── feature_importance.csv
+├── metrics.json
+├── test_predictions.csv
+│
 ├── app/
 │   └── streamlit_app.py
+│
+├── data/
+│   ├── processed/
+│   │   ├── house_sales_cleaned_for_ds570.csv
+│   │   └── istanbul_house_sales_subset_for_ds570.csv
+│   │
+│   └── raw/
+│       └── processed_turkish_house_sales.csv
+│
+├── models/
+│   └── .gitkeep
+│
 ├── src/
 │   ├── data/
 │   │   └── preprocess.py
-│   └── models/
-│       ├── train.py
-│       └── evaluate.py
-├── data/
-│   ├── raw/
-│   └── processed/
-│       └── house_sales_cleaned_for_ds570.csv
-├── models/
-│   └── .gitkeep
-├── reports/
-│   ├── Final Reports Docs/
-│   │   └──FINAL_QA_REPORT.md
-│   │   └── GITHUB_FINAL_CHECKLIST.md
-│   │   └── PRESENTATION_CHEATSHEET.md
-│   │   └── SUBMISSION_NOTE.md
-│   ├── DATA_AUDIT.md
-│   ├── MODEL_REPORT.md
-│   ├── DASHBOARD_REPORT.md
-│   ├── DOCKERIZATION_REPORT.md
-│   ├── DASHBOARD_REPORT.md
-│   ├── DASHBOARD_REPORT.md
-│   ├── DASHBOARD_REPORT.md
-│   ├── DASHBOARD_REPORT.md
-│   └── DOCKERIZATION_REPORT.md
-
-├── Dockerfile
-├── entrypoint.sh
+│   │
+│   ├── models/
+│   │   ├── evaluate.py
+│   │   └── train.py
+│   │
+│   └── preprocessing/
+│       └── Preprocessed_data.py
+│
 ├── .dockerignore
 ├── .gitignore
-├── requirements.txt
-├── Makefile
+├── Audit.md
 ├── DOCKER_RUN_GUIDE.md
-└── README.md
+├── Dockerfile
+├── Makefile
+├── README.md
+├── entrypoint.sh
+└── requirements.txt
+```
+
 ```
 
 ---
