@@ -245,10 +245,21 @@ The dashboard explicitly describes data and modeling limitations.
 ├── models/
 │   └── .gitkeep
 ├── reports/
+│   ├── Final Reports Docs/
+│   │   └──FINAL_QA_REPORT.md
+│   │   └── GITHUB_FINAL_CHECKLIST.md
+│   │   └── PRESENTATION_CHEATSHEET.md
+│   │   └── SUBMISSION_NOTE.md
 │   ├── DATA_AUDIT.md
 │   ├── MODEL_REPORT.md
 │   ├── DASHBOARD_REPORT.md
+│   ├── DOCKERIZATION_REPORT.md
+│   ├── DASHBOARD_REPORT.md
+│   ├── DASHBOARD_REPORT.md
+│   ├── DASHBOARD_REPORT.md
+│   ├── DASHBOARD_REPORT.md
 │   └── DOCKERIZATION_REPORT.md
+
 ├── Dockerfile
 ├── entrypoint.sh
 ├── .dockerignore
