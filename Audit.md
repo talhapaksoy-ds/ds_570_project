@@ -12,7 +12,7 @@ to:
 
 > **Turkish / Istanbul House Sale Price Prediction and Housing Affordability Dashboard**
 
-This still fits the DS570 requirements because the predictive task remains a clear regression problem, the dashboard can still include affordability analysis, and the dataset is small enough to run fast inside Docker.
+This still fits the requirements because the predictive task remains a clear regression problem, the dashboard can still include affordability analysis, and the dataset is small enough to run fast inside Docker.
 
 ## Uploaded Data Summary
 
