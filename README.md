@@ -29,6 +29,15 @@ This project develops a dashboard that allows users to:
 
 ## Data Source
 
+This project uses the **Real Estate Prices in Turkey 2025** dataset published on Kaggle by Emre Karadağ. The dataset is described as a Turkey housing prices dataset and contains real estate listing information that can be used to analyze the Turkish housing market and build predictive models for property prices.
+
+The original dataset page is available on Kaggle under the title **Real Estate Prices in Turkey 2025**. The dataset was selected because it provides property-level listing information from Turkey and is more relevant to the project objective than generic benchmark datasets such as Iris, MNIST or Titanic. 
+
+For this project, the raw dataset was processed into a cleaned CSV file used by the dashboard and modeling pipeline:
+
+```text
+data/processed/house_sales_cleaned_for_ds570.csv
+
 The project uses a processed Turkish house sale listings dataset.
 
 Expected file location:
