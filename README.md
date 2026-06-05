@@ -71,7 +71,11 @@ price_per_m2
 ```
 
 The dataset is based on sale listings rather than completed transaction prices. Therefore, the target variable represents asking price rather than confirmed market transaction price.
+```text
+Licensing and Terms of Use
 
+The dataset originates from Kaggle. Users should refer to the original Kaggle dataset page for the most up-to-date license and usage terms. The processed version included in this repository is used only for academic demonstration and reproducible project execution.
+```
 ---
 
 ## Target Variable
