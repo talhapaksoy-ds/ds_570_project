@@ -1,30 +1,39 @@
 #!/bin/sh
-set -e
 
-echo "Starting DS570 house price dashboard container..."
-mkdir -p models reports data/processed
+set -eu
+
+echo "Starting DS570 House Price Dashboard container..."
+
+mkdir -p models
+mkdir -p reports
 
 if [ ! -f "data/processed/house_sales_cleaned_for_ds570.csv" ]; then
+    echo "Processed data file was not found."
+    echo "Checking whether raw data exists..."
+
     if [ -f "data/raw/processed_turkish_house_sales.csv" ]; then
-        echo "Processed dataset not found. Running preprocessing pipeline..."
-        python src/data/preprocess.py \
-            --input data/raw/processed_turkish_house_sales.csv \
-            --output-dir data/processed
+        echo "Raw data found. Running preprocessing pipeline..."
+        python src/data/preprocess.py
     else
-        echo "ERROR: Processed dataset not found at data/processed/house_sales_cleaned_for_ds570.csv"
-        echo "ERROR: Raw fallback data/raw/processed_turkish_house_sales.csv was also not found."
+        echo "No processed or raw data file found."
+        echo "Expected one of the following files:"
+        echo "data/processed/house_sales_cleaned_for_ds570.csv"
+        echo "data/raw/processed_turkish_house_sales.csv"
         exit 1
     fi
+else
+    echo "Processed data found."
 fi
 
-if [ ! -f "models/house_price_model.joblib" ] || [ ! -f "reports/metrics.json" ] || [ ! -f "reports/feature_importance.csv" ] || [ ! -f "reports/test_predictions.csv" ]; then
-    echo "Model/report artifacts are missing. Running training pipeline..."
+if [ ! -f "models/house_price_model.joblib" ]; then
+    echo "Model file not found. Training model..."
     python src/models/train.py
 else
-    echo "Existing model/report artifacts found. Skipping training."
+    echo "Model file found."
 fi
 
-echo "Launching Streamlit dashboard on port 8501..."
-exec streamlit run app/streamlit_app.py \
+echo "Starting Streamlit dashboard..."
+
+streamlit run app/streamlit_app.py \
     --server.address=0.0.0.0 \
     --server.port=8501
